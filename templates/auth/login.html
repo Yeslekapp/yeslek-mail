@@ -147,7 +147,7 @@
             {% if config.get("GOOGLE_OAUTH_ENABLED", false) %}
                 <a
                     class="auth-button auth-button--provider"
-                    href="/auth/google"
+                   href="{{ url_for('auth.google_login') }}" 
                     aria-label="{{ t('auth.login.google') }}"
                 >
                     <svg
