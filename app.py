@@ -254,16 +254,57 @@ def initialize_i18n(
         }
 
 
+
 # ---------------------------
 # Blueprint registration
 # ---------------------------
 
-def register_routes(app):
-    from routes.auth_routes import auth_bp
-    from routes.dashboard_routes import dashboard_bp
+def register_routes(
+    app: Flask,
+) -> None:
+    import importlib
+    import pkgutil
 
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(dashboard_bp)
+    import routes
+    from flask import Blueprint
+
+    registered_blueprints: set[str] = set()
+
+    for module_info in pkgutil.iter_modules(
+        routes.__path__
+    ):
+        module_name = module_info.name
+
+        if module_name.startswith("_"):
+            continue
+
+        if not module_name.endswith("_routes"):
+            continue
+
+        module = importlib.import_module(
+            f"routes.{module_name}"
+        )
+
+        for value in vars(module).values():
+            if not isinstance(value, Blueprint):
+                continue
+
+            if value.name in registered_blueprints:
+                continue
+
+            app.register_blueprint(value)
+            registered_blueprints.add(value.name)
+
+            app.logger.info(
+                "Blueprint enregistré : %s",
+                value.name,
+            )
+
+    if not registered_blueprints:
+        raise RuntimeError(
+            "Aucun Blueprint trouvé dans "
+            "routes/*_routes.py"
+        )
 
 
 # ---------------------------
