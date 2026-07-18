@@ -130,7 +130,6 @@ def configure_logging(
         log_level
     )
 
-
 # ---------------------------
 # Redis
 # ---------------------------
@@ -165,6 +164,37 @@ def initialize_extensions(
     session_manager.init_app(app)
     limiter.init_app(app)
 
+    from services.google_oauth_service import (
+        init_google_oauth,
+    )
+
+    init_google_oauth(app)
+    init_celery(app)
+# ---------------------------
+# Flask extensions
+# ---------------------------
+
+def initialize_extensions(
+    app: Flask,
+) -> None:
+    db.init_app(app)
+
+    migrate.init_app(
+        app,
+        db,
+        compare_type=True,
+    )
+
+    login_manager.init_app(app)
+    csrf.init_app(app)
+    session_manager.init_app(app)
+    limiter.init_app(app)
+
+    from services.google_oauth_service import (
+        init_google_oauth,
+    )
+
+    init_google_oauth(app)
     init_celery(app)
 
 

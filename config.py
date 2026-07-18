@@ -124,6 +124,8 @@ def normalize_database_url(
 
     return normalized_value
 
+
+
 # ---------------------------
 # Base configuration
 # ---------------------------
@@ -171,7 +173,22 @@ class BaseConfig:
     JSON_SORT_KEYS = False
     PROPAGATE_EXCEPTIONS = False
 
+    # ---------------------------
+    # Google OAuth
+    # ---------------------------
 
+    GOOGLE_OAUTH_ENABLED = env_bool(
+        "GOOGLE_OAUTH_ENABLED",
+        False,
+    )
+
+    GOOGLE_CLIENT_ID = env_string(
+        "GOOGLE_CLIENT_ID",
+    )
+
+    GOOGLE_CLIENT_SECRET = env_string(
+        "GOOGLE_CLIENT_SECRET",
+    )
 # ---------------------------
 # PostgreSQL
 # ---------------------------
@@ -692,7 +709,28 @@ class ProductionConfig(BaseConfig):
                 or "change-this" in value
             )
         ]
+        if cls.GOOGLE_OAUTH_ENABLED:
+            missing_google_settings = [
+                name
+                for name, value in {
+                    "GOOGLE_CLIENT_ID": (
+                        cls.GOOGLE_CLIENT_ID
+                    ),
+                    "GOOGLE_CLIENT_SECRET": (
+                        cls.GOOGLE_CLIENT_SECRET
+                    ),
+                }.items()
+                if not value
+            ]
 
+            if missing_google_settings:
+                raise RuntimeError(
+                    "Configuration Google OAuth "
+                    "incomplète : "
+                    + ", ".join(
+                        missing_google_settings
+                    )
+                )
         if invalid_names:
             raise RuntimeError(
                 "Configuration de production non sécurisée : "
