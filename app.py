@@ -204,7 +204,6 @@ def initialize_models() -> None:
 # ---------------------------
 # Internationalization
 # ---------------------------
-
 def initialize_i18n(
     app: Flask,
 ) -> None:
@@ -225,27 +224,37 @@ def initialize_i18n(
         "i18n_service"
     ] = i18n_service
 
+    def translate(
+        key: str,
+        locale: str | None = None,
+    ) -> str:
+        selected_locale = (
+            locale
+            or g.get("locale")
+            or app.config[
+                "DEFAULT_LOCALE"
+            ]
+        )
+
+        return i18n_service.get(
+            key=key,
+            locale=selected_locale,
+        )
+
+    # Disponible même avec template.render()
+    app.jinja_env.globals[
+        "t"
+    ] = translate
+
+    app.jinja_env.globals[
+        "app_name"
+    ] = app.config[
+        "APP_NAME"
+    ]
+
+    # Disponible avec render_template()
     @app.context_processor
     def inject_translation_helpers():
-        def translate(
-            key: str,
-            locale: str | None = None,
-        ) -> str:
-            selected_locale = (
-                locale
-                or g.get(
-                    "locale"
-                )
-                or app.config[
-                    "DEFAULT_LOCALE"
-                ]
-            )
-
-            return i18n_service.get(
-                key=key,
-                locale=selected_locale,
-            )
-
         return {
             "app_name": app.config[
                 "APP_NAME"
