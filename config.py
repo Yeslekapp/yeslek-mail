@@ -337,26 +337,27 @@ class BaseConfig:
     )
 
 
-# ---------------------------
-# CSRF protection
-# ---------------------------
+    # ---------------------------
+    # CSRF protection
+    # ---------------------------
 
     WTF_CSRF_ENABLED = True
 
-    WTF_CSRF_TIME_LIMIT = timedelta(
-        hours=env_int(
+    WTF_CSRF_TIME_LIMIT = (
+        env_int(
             "CSRF_TOKEN_LIFETIME_HOURS",
             2,
             minimum=1,
             maximum=24,
         )
+        * 60
+        * 60
     )
 
     WTF_CSRF_SSL_STRICT = env_bool(
         "WTF_CSRF_SSL_STRICT",
         False,
     )
-
 
 # ---------------------------
 # Authentication
