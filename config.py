@@ -104,7 +104,25 @@ def env_csv(
         for item in raw_value.split(",")
         if item.strip()
     )
+def normalize_database_url(
+    value: str,
+) -> str:
+    normalized_value = value.strip()
 
+    prefixes = (
+        "postgresql+psycopg2://",
+        "postgresql://",
+        "postgres://",
+    )
+
+    for prefix in prefixes:
+        if normalized_value.startswith(prefix):
+            return (
+                "postgresql+psycopg://"
+                + normalized_value[len(prefix):]
+            )
+
+    return normalized_value
 
 # ---------------------------
 # Base configuration
@@ -158,12 +176,14 @@ class BaseConfig:
 # PostgreSQL
 # ---------------------------
 
-    SQLALCHEMY_DATABASE_URI = env_string(
-        "DATABASE_URL",
-        (
-            "postgresql+psycopg://yeslek:"
-            "yeslek_password@localhost:5432/yeslek_mail"
-        ),
+    SQLALCHEMY_DATABASE_URI = normalize_database_url(
+        env_string(
+            "DATABASE_URL",
+            (
+                "postgresql+psycopg://yeslek:"
+                "yeslek_password@localhost:5432/yeslek_mail"
+            ),
+        )
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -683,10 +703,11 @@ class ProductionConfig(BaseConfig):
             )
 
         if not cls.SQLALCHEMY_DATABASE_URI.startswith(
-            "postgresql"
+            "postgresql+psycopg://"
         ):
             raise RuntimeError(
-                "PostgreSQL est obligatoire en production."
+                "DATABASE_URL doit utiliser Psycopg 3 : "
+                "postgresql+psycopg://"
             )
 
         if not cls.PUBLIC_BASE_URL.startswith(
