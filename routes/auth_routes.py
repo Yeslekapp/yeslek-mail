@@ -671,13 +671,16 @@ def google_login():
         get_google_oauth_client()
     )
 
-    callback_url = url_for(
+    callback_path = url_for(
         "auth.google_callback",
-        _external=True,
-        _scheme=current_app.config.get(
-            "PREFERRED_URL_SCHEME",
-            "https",
-        ),
+    )
+
+    public_base_url = current_app.config[
+        "PUBLIC_BASE_URL"
+    ].rstrip("/")
+
+    callback_url = (
+        f"{public_base_url}{callback_path}"
     )
 
     nonce = secrets.token_urlsafe(32)
