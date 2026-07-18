@@ -258,12 +258,12 @@ def initialize_i18n(
 # Blueprint registration
 # ---------------------------
 
-def register_routes(
-    app: Flask,
-) -> None:
-    from routes import register_routes as register_blueprints
+def register_routes(app):
+    from routes.auth_routes import auth_bp
+    from routes.dashboard_routes import dashboard_bp
 
-    register_blueprints(app)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
 
 
 # ---------------------------
