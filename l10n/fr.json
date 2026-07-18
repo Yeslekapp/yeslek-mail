@@ -1,0 +1,191 @@
+{
+  "app": {
+    "name": "Yeslek Mail"
+  },
+  "common": {
+    "or": "ou",
+    "notifications": "Notifications"
+  },
+  "auth": {
+    "fields": {
+      "full_name": "Nom complet",
+      "organization": "Nom de l’organisation",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "password_confirmation": "Confirmation du mot de passe"
+    },
+
+"errors": {
+  "default": {
+    "page_title": "Erreur",
+    "code": "Erreur",
+    "title": "Une erreur est survenue",
+    "description": "Nous n’avons pas pu terminer votre demande."
+  },
+  "400": {
+    "page_title": "Requête invalide",
+    "code": "Erreur 400",
+    "title": "La requête est invalide",
+    "description": "Certaines informations envoyées sont absentes, incorrectes ou expirées."
+  },
+  "403": {
+    "page_title": "Accès refusé",
+    "code": "Erreur 403",
+    "title": "Vous n’avez pas accès à cette page",
+    "description": "Votre compte ne possède pas les autorisations nécessaires pour effectuer cette action."
+  },
+  "404": {
+    "page_title": "Page introuvable",
+    "code": "Erreur 404",
+    "title": "Cette page n’existe pas",
+    "description": "L’adresse utilisée est incorrecte ou la ressource a été déplacée."
+  },
+  "429": {
+    "page_title": "Trop de requêtes",
+    "code": "Erreur 429",
+    "title": "Veuillez patienter un instant",
+    "description": "Trop de requêtes ont été envoyées. Réessayez dans quelques minutes."
+  },
+  "500": {
+    "page_title": "Erreur interne",
+    "code": "Erreur 500",
+    "title": "Une erreur interne est survenue",
+    "description": "Notre serveur n’a pas pu terminer cette opération. La transaction en cours a été annulée."
+  },
+  "actions": {
+    "home": "Retour à l’accueil",
+    "back": "Page précédente"
+  },
+  "request_id": "Identifiant de la demande :"
+},
+
+"messages": {
+  "account_created": "Votre compte Yeslek Mail a été créé.",
+  "email_already_registered": "Cette adresse e-mail est déjà utilisée.",
+  "invalid_email": "L’adresse e-mail est invalide.",
+  "invalid_name": "Le nom renseigné est invalide.",
+  "name_too_long": "Le nom renseigné est trop long.",
+  "password_too_short": "Le mot de passe doit contenir au moins 12 caractères.",
+  "password_too_long": "Le mot de passe est trop long.",
+  "password_not_complex": "Le mot de passe doit contenir au moins trois types de caractères : minuscules, majuscules, chiffres ou symboles.",
+  "registration_conflict": "Le compte n’a pas pu être créé, car certaines informations existent déjà.",
+  "registration_failed": "Une erreur est survenue pendant la création du compte.",
+  "invalid_credentials": "Adresse e-mail ou mot de passe incorrect.",
+  "login_success": "Connexion réussie.",
+  "logged_out": "Vous êtes maintenant déconnecté."
+},
+    "placeholders": {
+      "full_name": "Votre nom complet",
+      "organization": "Nom de votre entreprise",
+      "email": "nom@entreprise.com",
+      "password": "Saisissez votre mot de passe",
+      "password_confirmation": "Confirmez votre mot de passe"
+    },
+    "password": {
+      "show": "Afficher le mot de passe",
+      "hide": "Masquer le mot de passe"
+    },
+    "oauth": {
+      "not_configured": "Cette méthode de connexion sera configurée prochainement."
+    },
+    "login": {
+      "page_title": "Connexion",
+      "title": "Connexion",
+      "submit": "Connexion",
+      "remember_me": "Se souvenir de moi",
+      "google": "Se connecter avec Google",
+      "apple": "Se connecter avec Apple",
+      "saml": "Se connecter avec SAML",
+      "create_account": "Créer un compte",
+      "forgot_password": "Mot de passe oublié",
+      "secondary_navigation": "Liens d’authentification"
+    },
+    "register": {
+      "page_title": "Créer un compte",
+      "title": "Le marketing en toute simplicité",
+      "subtitle": "Gratuit. Aucune carte bancaire n’est nécessaire.",
+      "presentation_title": "Développez votre communication avec Yeslek Mail",
+      "presentation_description": "Envoyez vos e-mails transactionnels, gérez vos domaines et suivez vos performances depuis une seule plateforme.",
+      "create_password": "Créez votre mot de passe",
+      "password_hint": "Utilisez au moins 12 caractères avec des lettres, des chiffres et un symbole.",
+      "google": "Connexion avec Google",
+      "apple": "Connexion avec Apple",
+      "submit": "Créer votre compte",
+      "legal_prefix": "En vous inscrivant, vous créez un compte Yeslek Mail et vous acceptez les",
+      "terms": "Conditions d’utilisation",
+      "legal_separator": "et la",
+      "privacy": "Politique de confidentialité",
+      "already_account": "Vous avez déjà un compte ?",
+      "login": "Connexion",
+      "benefits": {
+        "transactional": "E-mails transactionnels autonomes",
+        "api": "API sécurisée et clés par projet",
+        "analytics": "Statistiques et suivi des envois"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "navigation": {
+      "main": "Navigation principale",
+      "open": "Ouvrir le menu",
+      "close": "Fermer le menu",
+      "home": "Accueil",
+      "crm": "CRM",
+      "marketing": "Marketing",
+      "automations": "Automatisations",
+      "transactional": "Transactionnel",
+      "conversations": "Conversations",
+      "commerce": "Commerce",
+      "analytics": "Analytics",
+      "settings": "Paramètres"
+    },
+    "topbar": {
+      "consumption": "Consommation et forfait",
+      "help": "Aide",
+      "settings": "Paramètres",
+      "notifications": "Notifications"
+    },
+    "user_menu": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "logout": "Déconnexion"
+    },
+    "home": {
+      "page_title": "Accueil",
+      "contacts": {
+        "title": "Organisez vos contacts pour personnaliser vos messages",
+        "description": "Avec la segmentation et les listes, créez des campagnes ciblées basées sur le comportement et les données de vos clients.",
+        "action": "Ajouter des contacts"
+      },
+      "channels": {
+        "title": "Engagez vos clients via leur canal préféré",
+        "description": "Élargissez votre portée et communiquez avec vos clients depuis une plateforme unique.",
+        "action": "Découvrir les canaux"
+      },
+      "usage": {
+        "title": "Utilisation de votre offre",
+        "emails": "E-mails",
+        "prepaid": "Crédits prépayés",
+        "sms": "SMS",
+        "remaining": "restants sur",
+        "credits_remaining": "crédits restants",
+        "manage": "Gérer votre offre",
+        "add": "Ajouter des crédits"
+      },
+      "activity": {
+        "title": "Votre activité d’e-mails transactionnels",
+        "description": "E-mails envoyés au cours des 7 derniers jours",
+        "queued": "En attente",
+        "processing": "Traitement",
+        "failed": "Échecs"
+      },
+      "quick_actions": {
+        "title": "Actions rapides",
+        "domain": "Ajouter un domaine d’envoi",
+        "api_key": "Créer une clé API"
+      },
+      "compose": "Créer un e-mail"
+    }
+  }
+}

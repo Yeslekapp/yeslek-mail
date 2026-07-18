@@ -1,0 +1,763 @@
+{% extends "layouts/dashboard.html" %}
+
+{% set active_page = "home" %}
+
+{% block title %}
+    {{ t("dashboard.home.page_title") }} · {{ t("app.name") }}
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ---------------------------
+       Dashboard home
+    --------------------------- */
+
+    .home-grid {
+        display: grid;
+        gap: 32px;
+    }
+
+    .home-columns {
+        display: grid;
+        gap: 34px;
+    }
+
+    .home-column {
+        display: grid;
+        align-content: start;
+        gap: 34px;
+    }
+
+
+    /* ---------------------------
+       Welcome card
+    --------------------------- */
+
+    .welcome-card {
+        display: grid;
+        min-height: 470px;
+        align-items: center;
+        gap: 28px;
+        padding: 38px;
+    }
+
+    .welcome-card__illustration {
+        display: grid;
+        min-height: 220px;
+        place-items: center;
+    }
+
+    .welcome-card__illustration svg {
+        width: min(100%, 280px);
+        height: auto;
+    }
+
+    .welcome-card__content h2 {
+        margin: 0 0 18px;
+        font-size: clamp(1.9rem, 3vw, 2.55rem);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+    }
+
+    .welcome-card__content p {
+        margin: 0 0 28px;
+        color: var(--dashboard-muted);
+        font-size: 1.04rem;
+        line-height: 1.6;
+    }
+
+
+    /* ---------------------------
+       Usage card
+    --------------------------- */
+
+    .usage-card {
+        min-height: 470px;
+        padding: 34px;
+    }
+
+    .usage-card h2 {
+        margin: 0 0 34px;
+        font-size: 1.45rem;
+    }
+
+    .usage-list {
+        display: grid;
+        gap: 34px;
+    }
+
+    .usage-item {
+        display: grid;
+        gap: 12px;
+    }
+
+    .usage-item__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .usage-item__title {
+        font-size: 1.08rem;
+        font-weight: 650;
+    }
+
+    .usage-item__add {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        border: 2px solid var(--dashboard-purple);
+        border-radius: 50%;
+        color: var(--dashboard-purple);
+        background: transparent;
+        font-size: 1.2rem;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .usage-progress {
+        height: 10px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #eeeeee;
+    }
+
+    .usage-progress__value {
+        width: var(--usage-width, 0%);
+        height: 100%;
+        border-radius: inherit;
+        background: var(--dashboard-purple);
+    }
+
+    .usage-item__description {
+        margin: 0;
+        color: var(--dashboard-muted);
+    }
+
+    .usage-item__description strong {
+        color: var(--dashboard-text);
+    }
+
+    .usage-manage {
+        display: block;
+        margin-top: 40px;
+        color: var(--dashboard-purple);
+        font-weight: 750;
+        text-align: center;
+    }
+
+
+    /* ---------------------------
+       Activity card
+    --------------------------- */
+
+    .activity-card {
+        min-height: 280px;
+        padding: 30px;
+    }
+
+    .activity-card h2 {
+        margin: 0 0 30px;
+        font-size: 1.4rem;
+        line-height: 1.35;
+    }
+
+    .activity-value {
+        margin-bottom: 8px;
+        font-size: 2.7rem;
+        font-weight: 750;
+    }
+
+    .activity-description {
+        color: var(--dashboard-muted);
+        font-weight: 650;
+    }
+
+    .activity-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .activity-stat {
+        padding: 16px;
+        border-radius: 14px;
+        background: var(--dashboard-surface-soft);
+    }
+
+    .activity-stat span {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--dashboard-muted);
+        font-size: 0.82rem;
+    }
+
+    .activity-stat strong {
+        font-size: 1.25rem;
+    }
+
+
+    /* ---------------------------
+       Quick action card
+    --------------------------- */
+
+    .quick-card {
+        padding: 30px;
+    }
+
+    .quick-card h2 {
+        margin-top: 0;
+    }
+
+    .quick-actions {
+        display: grid;
+        gap: 12px;
+    }
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        min-height: 66px;
+        padding: 14px 16px;
+        border: 1px solid var(--dashboard-border);
+        border-radius: 16px;
+        transition:
+            border-color 150ms ease,
+            background 150ms ease,
+            transform 150ms ease;
+    }
+
+    .quick-action:hover {
+        border-color: var(--dashboard-green);
+        background: #f7fff9;
+        transform: translateY(-1px);
+    }
+
+    .quick-action__content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .quick-action__icon {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 13px;
+        color: var(--dashboard-green);
+        background: rgba(7, 155, 114, 0.1);
+    }
+
+
+    /* ---------------------------
+       Floating mail button
+    --------------------------- */
+
+    .floating-mail-button {
+        position: fixed;
+        right: 30px;
+        bottom: 28px;
+        z-index: 30;
+        display: grid;
+        width: 62px;
+        height: 62px;
+        place-items: center;
+        border: 0;
+        border-radius: 17px;
+        color: var(--dashboard-text);
+        background: #f5f5f5;
+        box-shadow: var(--dashboard-shadow);
+        cursor: pointer;
+    }
+
+    .floating-mail-button:hover {
+        background: #ebebeb;
+        transform: translateY(-2px);
+    }
+
+
+    /* ---------------------------
+       Responsive
+    --------------------------- */
+
+    @media (min-width: 1160px) {
+        .home-columns {
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(430px, 0.92fr);
+        }
+
+        .welcome-card {
+            grid-template-columns:
+                minmax(190px, 0.72fr)
+                minmax(0, 1.28fr);
+        }
+    }
+
+    @media (max-width: 720px) {
+        .welcome-card,
+        .usage-card,
+        .activity-card,
+        .quick-card {
+            padding: 24px;
+        }
+
+        .activity-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .floating-mail-button {
+            right: 18px;
+            bottom: 18px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="home-grid">
+    <div class="home-columns">
+        <div class="home-column">
+            <article class="dashboard-card welcome-card">
+                <div class="welcome-card__illustration">
+                    <svg
+                        viewBox="0 0 300 250"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+                        <rect
+                            x="48"
+                            y="72"
+                            width="64"
+                            height="57"
+                            fill="#D4FFB2"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></rect>
+
+                        <rect
+                            x="112"
+                            y="52"
+                            width="65"
+                            height="77"
+                            fill="#BFFFA7"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></rect>
+
+                        <path
+                            d="M58 194V138L162 44H210V89L112 194H58Z"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></path>
+
+                        <path
+                            d="M177 44H210V77"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></path>
+
+                        <circle
+                            cx="120"
+                            cy="128"
+                            r="23"
+                            fill="#079B72"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></circle>
+
+                        <path
+                            d="M84 194C84 166 99 150 120 150C141 150 156 166 156 194H84Z"
+                            fill="#079B72"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></path>
+
+                        <path
+                            d="M32 54C32 42 42 32 54 32H90C102 32 112 42 112 54V80C112 92 102 102 90 102H65L48 117V102H54C42 102 32 92 32 80V54Z"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></path>
+
+                        <circle
+                            cx="208"
+                            cy="40"
+                            r="7"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></circle>
+
+                        <path
+                            d="M184 151C199 151 211 139 211 124V112C196 112 184 124 184 139V151Z"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></path>
+
+                        <path
+                            d="M210 193V165L223 151L236 165V193H210Z"
+                            fill="#079B72"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></path>
+
+                        <circle
+                            cx="223"
+                            cy="166"
+                            r="3"
+                            fill="#FFF9E8"
+                        ></circle>
+                    </svg>
+                </div>
+
+                <div class="welcome-card__content">
+                    <h2>
+                        {{ t("dashboard.home.contacts.title") }}
+                    </h2>
+
+                    <p>
+                        {{ t("dashboard.home.contacts.description") }}
+                    </p>
+
+                    <a
+                        class="dashboard-button"
+                        href="#"
+                    >
+                        {{ t("dashboard.home.contacts.action") }}
+                    </a>
+                </div>
+            </article>
+
+            <article class="dashboard-card welcome-card">
+                <div class="welcome-card__illustration">
+                    <svg
+                        viewBox="0 0 300 240"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+                        <rect
+                            x="56"
+                            y="75"
+                            width="166"
+                            height="105"
+                            rx="28"
+                            fill="#D4FFB2"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></rect>
+
+                        <circle
+                            cx="106"
+                            cy="127"
+                            r="28"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></circle>
+
+                        <path
+                            d="M134 126H194C211 126 225 140 225 157V180"
+                            stroke="#079B72"
+                            stroke-width="9"
+                            stroke-linecap="round"
+                        ></path>
+
+                        <rect
+                            x="154"
+                            y="88"
+                            width="84"
+                            height="54"
+                            rx="27"
+                            fill="#BFFFA7"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></rect>
+
+                        <circle
+                            cx="177"
+                            cy="115"
+                            r="5"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></circle>
+
+                        <circle
+                            cx="196"
+                            cy="115"
+                            r="5"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></circle>
+
+                        <circle
+                            cx="215"
+                            cy="115"
+                            r="5"
+                            fill="#FFF9E8"
+                            stroke="#1C1C1C"
+                            stroke-width="2"
+                        ></circle>
+                    </svg>
+                </div>
+
+                <div class="welcome-card__content">
+                    <h2>
+                        {{ t("dashboard.home.channels.title") }}
+                    </h2>
+
+                    <p>
+                        {{ t("dashboard.home.channels.description") }}
+                    </p>
+
+                    <a
+                        class="dashboard-button"
+                        href="#"
+                    >
+                        {{ t("dashboard.home.channels.action") }}
+                    </a>
+                </div>
+            </article>
+        </div>
+
+        <div class="home-column">
+            <article class="dashboard-card usage-card">
+                <h2>
+                    {{ t("dashboard.home.usage.title") }}
+                </h2>
+
+                {% set email_limit = email_limit|default(300) %}
+                {% set email_used = email_used|default(1) %}
+                {% set email_remaining = email_limit - email_used %}
+
+                <div class="usage-list">
+                    <section class="usage-item">
+                        <div class="usage-item__header">
+                            <span class="usage-item__title">
+                                {{ t("dashboard.home.usage.emails") }}
+                            </span>
+
+                            <button
+                                class="usage-item__add"
+                                type="button"
+                                aria-label="{{ t('dashboard.home.usage.add') }}"
+                            >
+                                +
+                            </button>
+                        </div>
+
+                        <div
+                            class="usage-progress"
+                            role="progressbar"
+                            aria-valuemin="0"
+                            aria-valuemax="{{ email_limit }}"
+                            aria-valuenow="{{ email_used }}"
+                        >
+                            <div
+                                class="usage-progress__value"
+                                style="
+                                    --usage-width:
+                                    {{
+                                        (
+                                            email_used
+                                            / email_limit
+                                            * 100
+                                        )|round(2)
+                                    }}%;
+                                "
+                            ></div>
+                        </div>
+
+                        <p class="usage-item__description">
+                            <strong>
+                                {{ email_remaining }}
+                            </strong>
+
+                            {{ t("dashboard.home.usage.remaining") }}
+
+                            {{ email_limit }}
+                        </p>
+                    </section>
+
+                    <section class="usage-item">
+                        <div class="usage-item__header">
+                            <span class="usage-item__title">
+                                {{ t("dashboard.home.usage.prepaid") }}
+                            </span>
+
+                            <button
+                                class="usage-item__add"
+                                type="button"
+                                aria-label="{{ t('dashboard.home.usage.add') }}"
+                            >
+                                +
+                            </button>
+                        </div>
+
+                        <p class="usage-item__description">
+                            <strong>0</strong>
+
+                            {{ t("dashboard.home.usage.credits_remaining") }}
+                        </p>
+                    </section>
+
+                    <section class="usage-item">
+                        <div class="usage-item__header">
+                            <span class="usage-item__title">
+                                {{ t("dashboard.home.usage.sms") }}
+                            </span>
+                        </div>
+
+                        <p class="usage-item__description">
+                            <strong>0</strong>
+
+                            {{ t("dashboard.home.usage.credits_remaining") }}
+                        </p>
+                    </section>
+                </div>
+
+                <a
+                    class="usage-manage"
+                    href="#"
+                >
+                    {{ t("dashboard.home.usage.manage") }}
+                </a>
+            </article>
+
+            <article class="dashboard-card activity-card">
+                <h2>
+                    {{ t("dashboard.home.activity.title") }}
+                </h2>
+
+                <div class="activity-value">
+                    {{ stats.sent|default(0) }}
+                </div>
+
+                <div class="activity-description">
+                    {{ t("dashboard.home.activity.description") }}
+                </div>
+
+                <div class="activity-stats">
+                    <div class="activity-stat">
+                        <span>
+                            {{ t("dashboard.home.activity.queued") }}
+                        </span>
+
+                        <strong>
+                            {{ stats.queued|default(0) }}
+                        </strong>
+                    </div>
+
+                    <div class="activity-stat">
+                        <span>
+                            {{ t("dashboard.home.activity.processing") }}
+                        </span>
+
+                        <strong>
+                            {{ stats.processing|default(0) }}
+                        </strong>
+                    </div>
+
+                    <div class="activity-stat">
+                        <span>
+                            {{ t("dashboard.home.activity.failed") }}
+                        </span>
+
+                        <strong>
+                            {{ stats.failed|default(0) }}
+                        </strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="dashboard-card quick-card">
+                <h2>
+                    {{ t("dashboard.home.quick_actions.title") }}
+                </h2>
+
+                <div class="quick-actions">
+                    <a
+                        class="quick-action"
+                        href="/settings/senders-domains"
+                    >
+                        <span class="quick-action__content">
+                            <span class="quick-action__icon">
+                                @
+                            </span>
+
+                            <span>
+                                {{
+                                    t(
+                                        "dashboard.home.quick_actions.domain"
+                                    )
+                                }}
+                            </span>
+                        </span>
+
+                        <span>→</span>
+                    </a>
+
+                    <a
+                        class="quick-action"
+                        href="/settings/smtp-api"
+                    >
+                        <span class="quick-action__content">
+                            <span class="quick-action__icon">
+                                API
+                            </span>
+
+                            <span>
+                                {{
+                                    t(
+                                        "dashboard.home.quick_actions.api_key"
+                                    )
+                                }}
+                            </span>
+                        </span>
+
+                        <span>→</span>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<button
+    class="floating-mail-button"
+    type="button"
+    aria-label="{{ t('dashboard.home.compose') }}"
+>
+    <svg
+        width="34"
+        height="34"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+    >
+        <rect
+            x="3"
+            y="5"
+            width="18"
+            height="14"
+            rx="2"
+        ></rect>
+
+        <path d="m3 7 9 6 9-6"></path>
+    </svg>
+</button>
+{% endblock %}

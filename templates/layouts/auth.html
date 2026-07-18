@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="{{ locale|default('fr') }}">
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="color-scheme"
+        content="light"
+    >
+
+    <title>
+        {% block title %}
+            {{ t("app.name") }}
+        {% endblock %}
+    </title>
+
+    <style>
+        /* ---------------------------
+           Variables
+        --------------------------- */
+
+        :root {
+            --auth-background: #fff9e9;
+            --auth-surface: #ffffff;
+            --auth-text: #161616;
+            --auth-muted: #6f6f6f;
+            --auth-border: #d8d8d8;
+            --auth-primary: #202020;
+            --auth-primary-hover: #080808;
+            --auth-focus: #6557ff;
+            --auth-green: #079b72;
+            --auth-green-light: #d8ffb7;
+            --auth-danger: #d92d20;
+            --auth-shadow: 0 20px 50px rgba(28, 28, 28, 0.08);
+            --auth-radius: 20px;
+        }
+
+
+        /* ---------------------------
+           Reset
+        --------------------------- */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            color: var(--auth-text);
+            background: var(--auth-background);
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--auth-green-light) 0,
+                    var(--auth-green-light) 10px,
+                    transparent 10px
+                ),
+                var(--auth-background);
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        a {
+            color: inherit;
+        }
+
+
+        /* ---------------------------
+           Page
+        --------------------------- */
+
+        .auth-page {
+            min-height: 100vh;
+            padding: 42px 20px;
+        }
+
+        .auth-page--login {
+            display: grid;
+            place-items: center;
+        }
+
+        .auth-page--register {
+            display: grid;
+            align-items: center;
+        }
+
+        .auth-container {
+            width: min(100%, 1180px);
+            margin: 0 auto;
+        }
+
+
+        /* ---------------------------
+           Brand
+        --------------------------- */
+
+        .auth-brand {
+            position: fixed;
+            top: 24px;
+            left: 32px;
+            z-index: 10;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--auth-green);
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .auth-brand__mark {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 50%;
+            color: #ffffff;
+            background: var(--auth-green);
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+
+        /* ---------------------------
+           Login layout
+        --------------------------- */
+
+        .login-shell {
+            width: min(100%, 670px);
+            margin: 0 auto;
+        }
+
+        .login-card {
+            padding: 30px 28px 34px;
+            border: 1px solid var(--auth-border);
+            border-radius: var(--auth-radius);
+            background: var(--auth-surface);
+            box-shadow: var(--auth-shadow);
+        }
+
+
+        /* ---------------------------
+           Register layout
+        --------------------------- */
+
+        .register-shell {
+            display: grid;
+            width: min(100%, 1200px);
+            min-height: 760px;
+            margin: 0 auto;
+            overflow: hidden;
+            border: 1px solid rgba(216, 216, 216, 0.85);
+            border-radius: 28px;
+            background: var(--auth-surface);
+            box-shadow: var(--auth-shadow);
+        }
+
+        .register-presentation {
+            position: relative;
+            display: none;
+            min-height: 100%;
+            padding: 70px 60px;
+            overflow: hidden;
+            background:
+                linear-gradient(
+                    145deg,
+                    #d4ffb2 0%,
+                    #ecffe0 60%,
+                    #ffffff 100%
+                );
+        }
+
+        .register-presentation::before,
+        .register-presentation::after {
+            position: absolute;
+            content: "";
+            border-radius: 50%;
+            background: rgba(7, 155, 114, 0.11);
+        }
+
+        .register-presentation::before {
+            width: 360px;
+            height: 360px;
+            right: -120px;
+            bottom: -100px;
+        }
+
+        .register-presentation::after {
+            width: 190px;
+            height: 190px;
+            top: -70px;
+            left: -50px;
+        }
+
+        .register-presentation__content {
+            position: relative;
+            z-index: 2;
+            max-width: 470px;
+        }
+
+        .register-presentation__title {
+            margin: 24px 0;
+            font-size: clamp(2.8rem, 5vw, 4.8rem);
+            line-height: 1.02;
+            letter-spacing: -0.05em;
+        }
+
+        .register-presentation__description {
+            max-width: 430px;
+            color: #415046;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .register-benefits {
+            display: grid;
+            gap: 18px;
+            margin-top: 50px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .register-benefit {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 650;
+        }
+
+        .register-benefit__icon {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            place-items: center;
+            border-radius: 50%;
+            color: #ffffff;
+            background: var(--auth-green);
+        }
+
+        .register-form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 28px;
+        }
+
+        .register-form-container {
+            width: min(100%, 710px);
+        }
+
+
+        /* ---------------------------
+           Typography
+        --------------------------- */
+
+        .auth-title {
+            margin: 0 0 34px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .register-form-title {
+            margin: 0 0 10px;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.05;
+            letter-spacing: -0.045em;
+        }
+
+        .register-form-subtitle {
+            margin: 0 0 30px;
+            color: var(--auth-muted);
+            font-size: 1.1rem;
+        }
+
+
+        /* ---------------------------
+           Forms
+        --------------------------- */
+
+        .auth-form {
+            display: grid;
+            gap: 22px;
+        }
+
+        .auth-field {
+            display: grid;
+            gap: 10px;
+        }
+
+        .auth-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.02rem;
+            font-weight: 750;
+        }
+
+        .auth-required {
+            color: #ff3b45;
+        }
+
+        .auth-input-wrapper {
+            position: relative;
+        }
+
+        .auth-input {
+            width: 100%;
+            min-height: 56px;
+            padding: 14px 16px;
+            border: 1px solid var(--auth-border);
+            border-radius: 14px;
+            outline: none;
+            color: var(--auth-text);
+            background: #ffffff;
+            font-size: 1rem;
+            transition:
+                border-color 160ms ease,
+                box-shadow 160ms ease;
+        }
+
+        .auth-input:hover {
+            border-color: #a9a9a9;
+        }
+
+        .auth-input:focus {
+            border-color: var(--auth-focus);
+            box-shadow: 0 0 0 3px rgba(101, 87, 255, 0.14);
+        }
+
+        .auth-input--password {
+            padding-right: 54px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            display: grid;
+            width: 36px;
+            height: 36px;
+            place-items: center;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            color: var(--auth-text);
+            background: transparent;
+            cursor: pointer;
+            transform: translateY(-50%);
+        }
+
+        .password-toggle:hover {
+            background: #f3f3f3;
+        }
+
+        .password-toggle svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .auth-hint {
+            color: var(--auth-muted);
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+
+        .auth-error {
+            color: var(--auth-danger);
+            font-size: 0.86rem;
+            font-weight: 650;
+        }
+
+        .auth-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #404040;
+        }
+
+        .auth-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--auth-focus);
+        }
+
+
+        /* ---------------------------
+           Buttons
+        --------------------------- */
+
+        .auth-button {
+            display: inline-flex;
+            width: 100%;
+            min-height: 56px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 13px 20px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 750;
+            cursor: pointer;
+            transition:
+                transform 150ms ease,
+                background-color 150ms ease,
+                box-shadow 150ms ease;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .auth-button--primary {
+            border: 1px solid var(--auth-primary);
+            color: #ffffff;
+            background:
+                linear-gradient(
+                    180deg,
+                    #292929 0%,
+                    #171717 100%
+                );
+        }
+
+        .auth-button--primary:hover {
+            background: var(--auth-primary-hover);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.17);
+        }
+
+        .auth-button--provider {
+            border: 1px solid #d2d2d2;
+            color: var(--auth-text);
+            background: #ffffff;
+        }
+
+        .auth-button--provider:hover {
+            border-color: #a9a9a9;
+            background: #fafafa;
+        }
+
+        .auth-button--provider svg {
+            width: 27px;
+            height: 27px;
+            flex: 0 0 27px;
+        }
+
+
+        /* ---------------------------
+           Divider
+        --------------------------- */
+
+        .auth-divider {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 0;
+            color: var(--auth-text);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            height: 1px;
+            content: "";
+            background: var(--auth-border);
+        }
+
+
+        /* ---------------------------
+           Footer and links
+        --------------------------- */
+
+        .auth-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 30px;
+        }
+
+        .auth-link {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .auth-link:hover {
+            color: var(--auth-green);
+        }
+
+        .auth-legal {
+            margin: 0;
+            color: var(--auth-muted);
+            font-size: 0.86rem;
+            line-height: 1.55;
+            text-align: center;
+        }
+
+        .auth-legal a {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+
+        /* ---------------------------
+           Flash messages
+        --------------------------- */
+
+        .flash-stack {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: grid;
+            width: min(420px, calc(100% - 40px));
+            gap: 10px;
+        }
+
+        .flash-message {
+            padding: 14px 16px;
+            border: 1px solid var(--auth-border);
+            border-radius: 14px;
+            background: #ffffff;
+            box-shadow: var(--auth-shadow);
+        }
+
+        .flash-message--success {
+            border-left: 5px solid #079b72;
+        }
+
+        .flash-message--danger {
+            border-left: 5px solid #d92d20;
+        }
+
+        .flash-message--warning {
+            border-left: 5px solid #f79009;
+        }
+
+        .flash-message--info {
+            border-left: 5px solid #6557ff;
+        }
+
+
+        /* ---------------------------
+           Responsive
+        --------------------------- */
+
+        @media (min-width: 960px) {
+            .register-shell {
+                grid-template-columns:
+                    minmax(360px, 0.85fr)
+                    minmax(520px, 1.15fr);
+            }
+
+            .register-presentation {
+                display: block;
+            }
+
+            .register-form-panel {
+                padding: 64px 60px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .auth-page {
+                padding: 90px 14px 30px;
+            }
+
+            .auth-brand {
+                top: 18px;
+                left: 20px;
+            }
+
+            .login-card {
+                padding: 26px 18px;
+            }
+
+            .register-shell {
+                min-height: auto;
+                border-radius: 20px;
+            }
+
+            .register-form-panel {
+                padding: 34px 20px;
+            }
+
+            .register-form-title {
+                font-size: 2.35rem;
+            }
+        }
+    </style>
+
+    {% block extra_styles %}{% endblock %}
+</head>
+
+<body>
+    <a
+        class="auth-brand"
+        href="{{ url_for('auth.login') }}"
+        aria-label="{{ t('app.name') }}"
+    >
+        <span class="auth-brand__mark">Y</span>
+        <span>{{ t("app.name") }}</span>
+    </a>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section
+                class="flash-stack"
+                aria-live="polite"
+                aria-label="{{ t('common.notifications') }}"
+            >
+                {% for category, message in messages %}
+                    <div
+                        class="flash-message flash-message--{{ category }}"
+                        role="status"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <main
+        class="
+            auth-page
+            {% block page_class %}auth-page--login{% endblock %}
+        "
+    >
+        <div class="auth-container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script>
+        // ---------------------------
+        // Password visibility
+        // ---------------------------
+
+        document.querySelectorAll("[data-password-toggle]").forEach(
+            function (button) {
+                button.addEventListener("click", function () {
+                    const targetId = button.getAttribute(
+                        "data-password-toggle"
+                    );
+
+                    const input = document.getElementById(targetId);
+
+                    if (!input) {
+                        return;
+                    }
+
+                    const isPassword = input.type === "password";
+
+                    input.type = isPassword
+                        ? "text"
+                        : "password";
+
+                    button.setAttribute(
+                        "aria-pressed",
+                        String(isPassword)
+                    );
+
+                    button.setAttribute(
+                        "aria-label",
+                        isPassword
+                            ? button.dataset.hideLabel
+                            : button.dataset.showLabel
+                    );
+                });
+            }
+        );
+
+
+        // ---------------------------
+        // OAuth placeholders
+        // ---------------------------
+
+        document.querySelectorAll("[data-oauth-placeholder]").forEach(
+            function (button) {
+                button.addEventListener("click", function () {
+                    const message = button.getAttribute(
+                        "data-message"
+                    );
+
+                    if (message) {
+                        window.alert(message);
+                    }
+                });
+            }
+        );
+
+
+        // ---------------------------
+        // Flash auto close
+        // ---------------------------
+
+        window.setTimeout(function () {
+            document.querySelectorAll(".flash-message").forEach(
+                function (message) {
+                    message.style.transition = (
+                        "opacity 200ms ease, transform 200ms ease"
+                    );
+
+                    message.style.opacity = "0";
+                    message.style.transform = "translateY(-8px)";
+
+                    window.setTimeout(function () {
+                        message.remove();
+                    }, 220);
+                }
+            );
+        }, 5500);
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

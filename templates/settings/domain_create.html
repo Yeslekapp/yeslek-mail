@@ -1,0 +1,55 @@
+{% extends "settings/layout.html" %}
+
+{% set active_tab = "domains" %}
+
+{% block settings_content %}
+<section class="settings-panel">
+    <header class="settings-panel__header">
+        <h2>Ajouter un domaine d’envoi</h2>
+    </header>
+
+    <div class="settings-panel__body">
+        <form
+            class="settings-form"
+            method="post"
+            novalidate
+        >
+            {{ form.hidden_tag() }}
+
+            <div class="settings-field">
+                <label
+                    class="settings-label"
+                    for="{{ form.domain.id }}"
+                >
+                    Nom de domaine
+                </label>
+
+                {{ form.domain(
+                    class="settings-input",
+                    placeholder="yeslek.com"
+                ) }}
+
+                {% for error in form.domain.errors %}
+                    <span class="settings-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+            <div class="settings-actions">
+                {{ form.submit(
+                    class="dashboard-button",
+                    value="Ajouter le domaine"
+                ) }}
+
+                <a
+                    class="settings-link-button"
+                    href="{{ url_for('settings.senders_domains', tab='domains') }}"
+                >
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

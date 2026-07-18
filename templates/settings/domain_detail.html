@@ -1,0 +1,77 @@
+{% extends "settings/layout.html" %}
+
+{% set active_tab = "domains" %}
+
+{% block settings_content %}
+<section class="settings-panel">
+    <header class="settings-panel__header">
+        <div>
+            <h2>{{ sending_domain.domain }}</h2>
+
+            <span class="status-badge status-badge--{{ sending_domain.status }}">
+                {{ sending_domain.status }}
+            </span>
+        </div>
+
+        <form
+            method="post"
+            action="{{ url_for('settings.domain_verify', domain_id=sending_domain.id) }}"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button
+                class="dashboard-button"
+                type="submit"
+            >
+                Vérifier les DNS
+            </button>
+        </form>
+    </header>
+
+    <div class="settings-panel__body">
+        <p>
+            Ajoutez les enregistrements ci-dessous dans
+            la zone DNS de votre domaine.
+        </p>
+
+        <table class="settings-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Nom</th>
+                    <th>Valeur</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in sending_domain.dns_records %}
+                    {% set is_valid = sending_domain.verification_results.get(record.key, false) %}
+
+                    <tr>
+                        <td>{{ record.type }}</td>
+
+                        <td>
+                            <code>{{ record.host }}</code>
+                        </td>
+
+                        <td>
+                            <code>{{ record.value }}</code>
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-badge--{{ 'verified' if is_valid else 'pending' }}">
+                                {{ "Valide" if is_valid else "En attente" }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

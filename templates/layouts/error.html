@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="{{ g.locale|default('fr') }}">
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="color-scheme"
+        content="light"
+    >
+
+    <title>
+        {% block title %}
+            {{ t("errors.default.page_title") }}
+        {% endblock %}
+        · {{ t("app.name") }}
+    </title>
+
+    <style>
+        /* ---------------------------
+           Variables
+        --------------------------- */
+
+        :root {
+            --error-background: #fff9e9;
+            --error-surface: #ffffff;
+            --error-text: #171717;
+            --error-muted: #6f6f6f;
+            --error-border: #dedede;
+            --error-primary: #079b72;
+            --error-primary-dark: #057b5a;
+            --error-accent: #d4ffb2;
+            --error-shadow: 0 24px 70px rgba(20, 20, 20, 0.09);
+            --error-radius: 28px;
+        }
+
+
+        /* ---------------------------
+           Reset
+        --------------------------- */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            color: var(--error-text);
+            background: var(--error-background);
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--error-accent) 0,
+                    var(--error-accent) 10px,
+                    transparent 10px
+                ),
+                var(--error-background);
+        }
+
+        button,
+        a {
+            font: inherit;
+        }
+
+
+        /* ---------------------------
+           Page layout
+        --------------------------- */
+
+        .error-page {
+            display: grid;
+            min-height: 100vh;
+            place-items: center;
+            padding: 32px 20px;
+        }
+
+        .error-card {
+            position: relative;
+            width: min(100%, 760px);
+            overflow: hidden;
+            padding: 50px 38px;
+            border: 1px solid var(--error-border);
+            border-radius: var(--error-radius);
+            background: var(--error-surface);
+            box-shadow: var(--error-shadow);
+            text-align: center;
+        }
+
+        .error-card::before {
+            position: absolute;
+            top: -90px;
+            right: -90px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            content: "";
+            background: rgba(212, 255, 178, 0.55);
+        }
+
+        .error-card::after {
+            position: absolute;
+            bottom: -120px;
+            left: -100px;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            content: "";
+            background: rgba(7, 155, 114, 0.08);
+        }
+
+        .error-content {
+            position: relative;
+            z-index: 2;
+        }
+
+
+        /* ---------------------------
+           Brand
+        --------------------------- */
+
+        .error-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 34px;
+            color: var(--error-primary);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .error-brand__mark {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 50%;
+            color: #ffffff;
+            background: var(--error-primary);
+            font-size: 1.35rem;
+        }
+
+
+        /* ---------------------------
+           Error content
+        --------------------------- */
+
+        .error-code {
+            display: inline-flex;
+            min-height: 46px;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 18px;
+            border-radius: 999px;
+            color: var(--error-primary-dark);
+            background: rgba(7, 155, 114, 0.1);
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .error-title {
+            margin: 24px 0 16px;
+            font-size: clamp(2.1rem, 6vw, 4rem);
+            line-height: 1.05;
+            letter-spacing: -0.05em;
+        }
+
+        .error-description {
+            max-width: 570px;
+            margin: 0 auto;
+            color: var(--error-muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .error-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 34px;
+        }
+
+        .error-button {
+            display: inline-flex;
+            min-height: 50px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 22px;
+            border: 1px solid transparent;
+            border-radius: 15px;
+            font-weight: 750;
+            text-decoration: none;
+            cursor: pointer;
+            transition:
+                transform 150ms ease,
+                background-color 150ms ease,
+                border-color 150ms ease;
+        }
+
+        .error-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .error-button--primary {
+            color: #ffffff;
+            background: var(--error-primary);
+        }
+
+        .error-button--primary:hover {
+            background: var(--error-primary-dark);
+        }
+
+        .error-button--secondary {
+            border-color: var(--error-border);
+            color: var(--error-text);
+            background: #ffffff;
+        }
+
+        .error-button--secondary:hover {
+            border-color: #a8a8a8;
+            background: #fafafa;
+        }
+
+        .error-request-id {
+            margin-top: 30px;
+            color: var(--error-muted);
+            font-size: 0.8rem;
+        }
+
+        .error-request-id code {
+            overflow-wrap: anywhere;
+        }
+
+
+        /* ---------------------------
+           Responsive
+        --------------------------- */
+
+        @media (max-width: 600px) {
+            .error-card {
+                padding: 38px 22px;
+                border-radius: 22px;
+            }
+
+            .error-actions {
+                display: grid;
+            }
+
+            .error-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="error-page">
+        <section class="error-card">
+            <div class="error-content">
+                <a
+                    class="error-brand"
+                    href="{{ url_for('index') }}"
+                >
+                    <span class="error-brand__mark">
+                        Y
+                    </span>
+
+                    <span>
+                        {{ t("app.name") }}
+                    </span>
+                </a>
+
+                <div>
+                    <span class="error-code">
+                        {% block error_code %}
+                            {{ t("errors.default.code") }}
+                        {% endblock %}
+                    </span>
+                </div>
+
+                <h1 class="error-title">
+                    {% block error_title %}
+                        {{ t("errors.default.title") }}
+                    {% endblock %}
+                </h1>
+
+                <p class="error-description">
+                    {% block error_description %}
+                        {{ t("errors.default.description") }}
+                    {% endblock %}
+                </p>
+
+                <div class="error-actions">
+                    <a
+                        class="error-button error-button--primary"
+                        href="{{ url_for('index') }}"
+                    >
+                        {{ t("errors.actions.home") }}
+                    </a>
+
+                    <button
+                        class="error-button error-button--secondary"
+                        type="button"
+                        onclick="window.history.back()"
+                    >
+                        {{ t("errors.actions.back") }}
+                    </button>
+                </div>
+
+                {% if g.request_id %}
+                    <p class="error-request-id">
+                        {{ t("errors.request_id") }}
+                        <code>{{ g.request_id }}</code>
+                    </p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

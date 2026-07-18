@@ -1,0 +1,250 @@
+{% extends "settings/layout.html" %}
+
+{% block settings_content %}
+    {% if active_tab == "senders" %}
+        <section class="settings-panel">
+            <header class="settings-panel__header">
+                <h2>Expéditeurs</h2>
+
+                <a
+                    class="dashboard-button"
+                    href="{{ url_for('settings.sender_create') }}"
+                >
+                    Ajouter un expéditeur
+                </a>
+            </header>
+
+            {% if senders %}
+                <div class="settings-panel__body">
+                    <table class="settings-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Adresse e-mail</th>
+                                <th>Domaine</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for sender in senders %}
+                                <tr>
+                                    <td>{{ sender.name }}</td>
+                                    <td>{{ sender.email }}</td>
+                                    <td>{{ sender.domain }}</td>
+                                    <td>
+                                        <span class="status-badge status-badge--{{ sender.status }}">
+                                            {{ sender.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="settings-actions">
+                                            <a
+                                                class="settings-link-button"
+                                                href="{{ url_for('settings.sender_edit', sender_id=sender.id) }}"
+                                            >
+                                                Modifier
+                                            </a>
+
+                                            <form
+                                                method="post"
+                                                action="{{ url_for('settings.sender_delete', sender_id=sender.id) }}"
+                                                data-confirm-delete
+                                            >
+                                                <input
+                                                    type="hidden"
+                                                    name="csrf_token"
+                                                    value="{{ csrf_token() }}"
+                                                >
+
+                                                <button
+                                                    class="settings-danger-button"
+                                                    type="submit"
+                                                >
+                                                    Supprimer
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="settings-empty">
+                    <div class="settings-empty__icon">@</div>
+
+                    <h3>Aucun expéditeur</h3>
+
+                    <p>
+                        Ajoutez l’adresse qui apparaîtra dans
+                        le champ expéditeur de vos e-mails.
+                    </p>
+
+                    <a
+                        class="dashboard-button"
+                        href="{{ url_for('settings.sender_create') }}"
+                    >
+                        Ajouter un expéditeur
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+    {% elif active_tab == "domains" %}
+        <section class="settings-panel">
+            <header class="settings-panel__header">
+                <h2>Domaines d’envoi</h2>
+
+                <a
+                    class="dashboard-button"
+                    href="{{ url_for('settings.domain_create') }}"
+                >
+                    Ajouter un domaine
+                </a>
+            </header>
+
+            {% if domains %}
+                <div class="settings-panel__body">
+                    <table class="settings-table">
+                        <thead>
+                            <tr>
+                                <th>Domaine</th>
+                                <th>Statut</th>
+                                <th>Dernière vérification</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for domain in domains %}
+                                <tr>
+                                    <td>{{ domain.domain }}</td>
+
+                                    <td>
+                                        <span class="status-badge status-badge--{{ domain.status }}">
+                                            {{ domain.status }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {% if domain.last_checked_at %}
+                                            {{ domain.last_checked_at.strftime("%d/%m/%Y %H:%M") }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <a
+                                            class="settings-link-button"
+                                            href="{{ url_for('settings.domain_detail', domain_id=domain.id) }}"
+                                        >
+                                            Configurer
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="settings-empty">
+                    <div class="settings-empty__icon">DNS</div>
+
+                    <h3>Aucun domaine</h3>
+
+                    <p>
+                        Ajoutez votre domaine puis configurez
+                        SPF, DKIM, DMARC et Return-Path.
+                    </p>
+
+                    <a
+                        class="dashboard-button"
+                        href="{{ url_for('settings.domain_create') }}"
+                    >
+                        Ajouter un domaine
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+    {% elif active_tab == "dedicated-ips" %}
+        <section class="settings-panel">
+            <header class="settings-panel__header">
+                <h2>IP dédiées</h2>
+            </header>
+
+            <div class="settings-empty">
+                <div class="settings-empty__icon">IP</div>
+
+                <h3>Aucune IP dédiée</h3>
+
+                <p>
+                    Les IP dédiées seront disponibles après
+                    l’installation des serveurs Postfix de production.
+                </p>
+            </div>
+        </section>
+
+    {% elif active_tab == "sending-rate" %}
+        <section class="settings-panel">
+            <header class="settings-panel__header">
+                <h2>Cadence d’envoi</h2>
+
+                <a
+                    class="dashboard-button"
+                    href="{{ url_for('settings.sending_rate') }}"
+                >
+                    Modifier
+                </a>
+            </header>
+
+            <div class="settings-panel__body">
+                <table class="settings-table">
+                    <tbody>
+                        <tr>
+                            <th>E-mails par minute</th>
+                            <td>{{ sending_rate.emails_per_minute }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>E-mails par heure</th>
+                            <td>{{ sending_rate.emails_per_hour }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Par domaine et par minute</th>
+                            <td>{{ sending_rate.emails_per_domain_per_minute }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Réchauffement de l’IP</th>
+                            <td>
+                                {{ "Activé" if sending_rate.warmup_enabled else "Désactivé" }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% endif %}
+
+<script>
+    document.querySelectorAll("[data-confirm-delete]").forEach(
+        function (form) {
+            form.addEventListener("submit", function (event) {
+                const confirmed = window.confirm(
+                    "Supprimer définitivement cet expéditeur ?"
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        }
+    );
+</script>
+{% endblock %}

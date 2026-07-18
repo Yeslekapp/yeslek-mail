@@ -1,0 +1,109 @@
+# ---------------------------
+# Git
+# ---------------------------
+
+.git
+.gitignore
+.github/
+
+
+# ---------------------------
+# Docker
+# ---------------------------
+
+Dockerfile*
+docker-compose*.yml
+docker-compose*.yaml
+.dockerignore
+
+
+# ---------------------------
+# Python cache
+# ---------------------------
+
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+
+.coverage
+htmlcov/
+
+
+# ---------------------------
+# Virtual environments
+# ---------------------------
+
+.venv/
+venv/
+env/
+
+
+# ---------------------------
+# Secrets
+# ---------------------------
+
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+credentials.json
+service-account.json
+service_account.json
+
+secrets/
+private/
+
+
+# ---------------------------
+# Runtime
+# ---------------------------
+
+instance/
+logs/
+*.log
+
+celerybeat-schedule
+celerybeat.pid
+
+
+# ---------------------------
+# Local database data
+# ---------------------------
+
+postgres-data/
+pgdata/
+redis-data/
+docker-data/
+volumes/
+
+
+# ---------------------------
+# Editor and OS files
+# ---------------------------
+
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+
+# ---------------------------
+# Documentation and tests
+# ---------------------------
+
+tests/
+README.md

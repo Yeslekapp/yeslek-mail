@@ -1,0 +1,75 @@
+{% extends "settings/layout.html" %}
+
+{% set active_tab = "senders" %}
+
+{% block settings_content %}
+<section class="settings-panel">
+    <header class="settings-panel__header">
+        <h2>Ajouter un expéditeur</h2>
+    </header>
+
+    <div class="settings-panel__body">
+        <form
+            class="settings-form"
+            method="post"
+            novalidate
+        >
+            {{ form.hidden_tag() }}
+
+            <div class="settings-field">
+                <label
+                    class="settings-label"
+                    for="{{ form.name.id }}"
+                >
+                    Nom de l’expéditeur
+                </label>
+
+                {{ form.name(
+                    class="settings-input",
+                    placeholder="Yeslek"
+                ) }}
+
+                {% for error in form.name.errors %}
+                    <span class="settings-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+            <div class="settings-field">
+                <label
+                    class="settings-label"
+                    for="{{ form.email.id }}"
+                >
+                    Adresse e-mail
+                </label>
+
+                {{ form.email(
+                    class="settings-input",
+                    placeholder="notifications@yeslek.com"
+                ) }}
+
+                {% for error in form.email.errors %}
+                    <span class="settings-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+            <div class="settings-actions">
+                {{ form.submit(
+                    class="dashboard-button",
+                    value="Ajouter"
+                ) }}
+
+                <a
+                    class="settings-link-button"
+                    href="{{ url_for('settings.senders_domains', tab='senders') }}"
+                >
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

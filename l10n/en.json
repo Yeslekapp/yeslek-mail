@@ -1,0 +1,191 @@
+{
+  "app": {
+    "name": "Yeslek Mail"
+  },
+  "common": {
+    "or": "or",
+    "notifications": "Notifications"
+  },
+  "auth": {
+    "fields": {
+      "full_name": "Full name",
+      "organization": "Organization name",
+      "email": "Email address",
+      "password": "Password",
+      "password_confirmation": "Confirm password"
+    },
+
+"errors": {
+  "default": {
+    "page_title": "Error",
+    "code": "Error",
+    "title": "An error occurred",
+    "description": "We could not complete your request."
+  },
+  "400": {
+    "page_title": "Invalid request",
+    "code": "Error 400",
+    "title": "The request is invalid",
+    "description": "Some submitted information is missing, invalid or expired."
+  },
+  "403": {
+    "page_title": "Access denied",
+    "code": "Error 403",
+    "title": "You cannot access this page",
+    "description": "Your account does not have the required permissions to perform this action."
+  },
+  "404": {
+    "page_title": "Page not found",
+    "code": "Error 404",
+    "title": "This page does not exist",
+    "description": "The address is incorrect or the resource has been moved."
+  },
+  "429": {
+    "page_title": "Too many requests",
+    "code": "Error 429",
+    "title": "Please wait a moment",
+    "description": "Too many requests were submitted. Try again in a few minutes."
+  },
+  "500": {
+    "page_title": "Internal error",
+    "code": "Error 500",
+    "title": "An internal error occurred",
+    "description": "The server could not complete this operation. The current transaction was rolled back."
+  },
+  "actions": {
+    "home": "Back to home",
+    "back": "Previous page"
+  },
+  "request_id": "Request identifier:"
+},
+
+"messages": {
+  "account_created": "Your Yeslek Mail account has been created.",
+  "email_already_registered": "This email address is already in use.",
+  "invalid_email": "The email address is invalid.",
+  "invalid_name": "The provided name is invalid.",
+  "name_too_long": "The provided name is too long.",
+  "password_too_short": "The password must contain at least 12 characters.",
+  "password_too_long": "The password is too long.",
+  "password_not_complex": "The password must contain at least three character types: lowercase letters, uppercase letters, numbers or symbols.",
+  "registration_conflict": "The account could not be created because some information already exists.",
+  "registration_failed": "An error occurred while creating the account.",
+  "invalid_credentials": "Invalid email address or password.",
+  "login_success": "You are now signed in.",
+  "logged_out": "You are now signed out."
+},
+    "placeholders": {
+      "full_name": "Your full name",
+      "organization": "Your company name",
+      "email": "name@company.com",
+      "password": "Enter your password",
+      "password_confirmation": "Confirm your password"
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "oauth": {
+      "not_configured": "This sign-in method will be configured soon."
+    },
+    "login": {
+      "page_title": "Sign in",
+      "title": "Sign in",
+      "submit": "Sign in",
+      "remember_me": "Remember me",
+      "google": "Sign in with Google",
+      "apple": "Sign in with Apple",
+      "saml": "Sign in with SAML",
+      "create_account": "Create an account",
+      "forgot_password": "Forgot password",
+      "secondary_navigation": "Authentication links"
+    },
+    "register": {
+      "page_title": "Create an account",
+      "title": "Marketing made simple",
+      "subtitle": "Free. No credit card required.",
+      "presentation_title": "Grow your communication with Yeslek Mail",
+      "presentation_description": "Send transactional emails, manage your domains and monitor performance from one platform.",
+      "create_password": "Create your password",
+      "password_hint": "Use at least 12 characters with letters, numbers and a symbol.",
+      "google": "Continue with Google",
+      "apple": "Continue with Apple",
+      "submit": "Create your account",
+      "legal_prefix": "By signing up, you create a Yeslek Mail account and accept the",
+      "terms": "Terms of service",
+      "legal_separator": "and the",
+      "privacy": "Privacy policy",
+      "already_account": "Already have an account?",
+      "login": "Sign in",
+      "benefits": {
+        "transactional": "Independent transactional emails",
+        "api": "Secure API and project keys",
+        "analytics": "Delivery statistics and monitoring"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "navigation": {
+      "main": "Main navigation",
+      "open": "Open menu",
+      "close": "Close menu",
+      "home": "Home",
+      "crm": "CRM",
+      "marketing": "Marketing",
+      "automations": "Automations",
+      "transactional": "Transactional",
+      "conversations": "Conversations",
+      "commerce": "Commerce",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "topbar": {
+      "consumption": "Usage and plan",
+      "help": "Help",
+      "settings": "Settings",
+      "notifications": "Notifications"
+    },
+    "user_menu": {
+      "profile": "Profile",
+      "security": "Security",
+      "logout": "Sign out"
+    },
+    "home": {
+      "page_title": "Home",
+      "contacts": {
+        "title": "Organize your contacts to personalize your messages",
+        "description": "Use lists and segmentation to create targeted campaigns based on customer behavior and data.",
+        "action": "Add contacts"
+      },
+      "channels": {
+        "title": "Engage customers through their preferred channel",
+        "description": "Expand your reach and communicate with customers from a single platform.",
+        "action": "Explore channels"
+      },
+      "usage": {
+        "title": "Your plan usage",
+        "emails": "Emails",
+        "prepaid": "Prepaid credits",
+        "sms": "SMS",
+        "remaining": "remaining out of",
+        "credits_remaining": "credits remaining",
+        "manage": "Manage your plan",
+        "add": "Add credits"
+      },
+      "activity": {
+        "title": "Your transactional email activity",
+        "description": "Emails sent during the last 7 days",
+        "queued": "Queued",
+        "processing": "Processing",
+        "failed": "Failed"
+      },
+      "quick_actions": {
+        "title": "Quick actions",
+        "domain": "Add a sending domain",
+        "api_key": "Create an API key"
+      },
+      "compose": "Create an email"
+    }
+  }
+}
