@@ -217,28 +217,24 @@ class BaseConfig:
     }
 
 
-# ---------------------------
-# Redis
-# ---------------------------
+    # ---------------------------
+    # Redis
+    # ---------------------------
 
     REDIS_URL = env_string(
-        "REDIS_URL",
-        "redis://localhost:6379/0",
+        "REDIS_URL"
     )
 
     SESSION_REDIS_URL = env_string(
-        "SESSION_REDIS_URL",
-        "redis://localhost:6379/1",
+        "SESSION_REDIS_URL"
     )
 
     CELERY_BROKER_URL = env_string(
-        "CELERY_BROKER_URL",
-        "redis://localhost:6379/2",
+        "CELERY_BROKER_URL"
     )
 
     CELERY_RESULT_BACKEND = env_string(
-        "CELERY_RESULT_BACKEND",
-        "redis://localhost:6379/3",
+        "CELERY_RESULT_BACKEND"
     )
 
 
