@@ -17,7 +17,6 @@ from flask import (
 )
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
-from redis import Redis
 from sqlalchemy import text
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -139,33 +138,11 @@ def configure_logging(
 def configure_redis(
     app: Flask,
 ) -> None:
-    session_redis = Redis.from_url(
-        app.config[
-            "SESSION_REDIS_URL"
-        ],
-        decode_responses=False,
-        socket_connect_timeout=5,
-        socket_timeout=5,
-        health_check_interval=30,
+    from services.redis_service import (
+        configure_redis_clients,
     )
 
-    general_redis = Redis.from_url(
-        app.config[
-            "REDIS_URL"
-        ],
-        decode_responses=True,
-        socket_connect_timeout=5,
-        socket_timeout=5,
-        health_check_interval=30,
-    )
-
-    app.config[
-        "SESSION_REDIS"
-    ] = session_redis
-
-    app.extensions[
-        "redis"
-    ] = general_redis
+    configure_redis_clients(app)
 
 
 # ---------------------------
