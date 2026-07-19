@@ -27,6 +27,28 @@ from services.security.password_service import PasswordService
 
 
 # ---------------------------
+# Constants
+# ---------------------------
+
+SUPPORTED_LOCALES = frozenset(
+    {
+        "fr",
+        "en",
+    }
+)
+
+DEFAULT_LOCALE = "fr"
+
+DEFAULT_PROJECT_NAME = (
+    "Mon premier projet"
+)
+
+DEFAULT_PROJECT_SLUG = (
+    "mon-premier-projet"
+)
+
+
+# ---------------------------
 # Authentication exceptions
 # ---------------------------
 
@@ -44,7 +66,10 @@ class AuthServiceError(Exception):
 # Registration result
 # ---------------------------
 
-@dataclass(frozen=True, slots=True)
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class RegistrationResult:
     user: User
     organization: Organization
@@ -64,12 +89,25 @@ class AuthService:
         project_repository: ProjectRepository,
         password_service: PasswordService,
     ) -> None:
-        self._user_repository = user_repository
+        self._user_repository = (
+            user_repository
+        )
+
         self._organization_repository = (
             organization_repository
         )
-        self._project_repository = project_repository
-        self._password_service = password_service
+
+        self._project_repository = (
+            project_repository
+        )
+
+        self._password_service = (
+            password_service
+        )
+
+    # ---------------------------
+    # Registration
+    # ---------------------------
 
     def register(
         self,
@@ -82,104 +120,157 @@ class AuthService:
         default_sender_email: str,
         default_sender_name: str,
     ) -> RegistrationResult:
-        normalized_name = self._normalize_name(
-            full_name,
-            maximum_length=120,
+        normalized_name = (
+            self._normalize_name(
+                full_name,
+                maximum_length=120,
+            )
         )
 
-        normalized_organization_name = self._normalize_name(
-            organization_name,
-            maximum_length=160,
+        normalized_organization_name = (
+            self._normalize_name(
+                organization_name,
+                maximum_length=160,
+            )
         )
 
-        normalized_email = self._normalize_email(
-            email
+        normalized_email = (
+            self._normalize_email(
+                email
+            )
         )
 
         normalized_locale = (
-            locale
-            if locale in {
-                "fr",
-                "en",
-            }
-            else "fr"
+            self._normalize_locale(
+                locale
+            )
+        )
+
+        clean_sender_email = (
+            str(
+                default_sender_email
+                or ""
+            ).strip()
+        )
+
+        clean_sender_name = (
+            str(
+                default_sender_name
+                or ""
+            ).strip()
         )
 
         try:
             self._password_service.validate_strength(
                 password
             )
+
         except ValueError as exc:
             raise AuthServiceError(
                 str(exc)
             ) from exc
 
         try:
-            with db.session.begin():
-                existing_user = (
-                    self._user_repository.get_by_email(
-                        normalized_email
+            existing_user = (
+                self._user_repository.get_by_email(
+                    normalized_email
+                )
+            )
+
+            if existing_user is not None:
+                raise AuthServiceError(
+                    "email_already_registered"
+                )
+
+            # ---------------------------
+            # User
+            # ---------------------------
+
+            user = User(
+                full_name=normalized_name,
+                email=normalized_email,
+                password_hash=(
+                    self._password_service.hash(
+                        password
                     )
-                )
+                ),
+                locale=normalized_locale,
+                is_active=True,
+            )
 
-                if existing_user is not None:
-                    raise AuthServiceError(
-                        "email_already_registered"
-                    )
+            self._user_repository.add(
+                user
+            )
 
-                user = User(
-                    full_name=normalized_name,
-                    email=normalized_email,
-                    password_hash=(
-                        self._password_service.hash(
-                            password
-                        )
-                    ),
-                    locale=normalized_locale,
-                    is_active=True,
-                )
+            # Required before using user.id.
+            db.session.flush()
 
-                self._user_repository.add(
-                    user
-                )
+            # ---------------------------
+            # Organization
+            # ---------------------------
 
-                organization = Organization(
-                    name=normalized_organization_name,
-                    slug=self._create_unique_slug(
-                        normalized_organization_name
-                    ),
-                )
+            organization = Organization(
+                name=(
+                    normalized_organization_name
+                ),
+                slug=self._create_unique_slug(
+                    normalized_organization_name,
+                    maximum_length=160,
+                    fallback="organisation",
+                ),
+            )
 
-                self._organization_repository.add(
-                    organization
-                )
+            self._organization_repository.add(
+                organization
+            )
 
-                membership = OrganizationMember(
-                    organization_id=organization.id,
-                    user_id=user.id,
-                    role="owner",
-                )
+            # Required before using
+            # organization.id.
+            db.session.flush()
 
-                self._organization_repository.add_member(
-                    membership
-                )
+            # ---------------------------
+            # Organization membership
+            # ---------------------------
 
-                project = Project(
-                    organization_id=organization.id,
-                    name="Mon premier projet",
-                    slug="mon-premier-projet",
-                    environment="production",
-                    default_sender_email=(
-                        default_sender_email
-                    ),
-                    default_sender_name=(
-                        default_sender_name
-                    ),
-                )
+            membership = OrganizationMember(
+                organization_id=(
+                    organization.id
+                ),
+                user_id=user.id,
+                role="owner",
+            )
 
-                self._project_repository.add(
-                    project
-                )
+            self._organization_repository.add_member(
+                membership
+            )
+
+            # ---------------------------
+            # Default project
+            # ---------------------------
+
+            project = Project(
+                organization_id=(
+                    organization.id
+                ),
+                name=DEFAULT_PROJECT_NAME,
+                slug=DEFAULT_PROJECT_SLUG,
+                environment="production",
+                default_sender_email=(
+                    clean_sender_email
+                ),
+                default_sender_name=(
+                    clean_sender_name
+                ),
+            )
+
+            self._project_repository.add(
+                project
+            )
+
+            # Detect database constraints before
+            # committing the transaction.
+            db.session.flush()
+            db.session.commit()
 
         except AuthServiceError:
             db.session.rollback()
@@ -202,6 +293,10 @@ class AuthService:
             project=project,
         )
 
+    # ---------------------------
+    # Password authentication
+    # ---------------------------
+
     def authenticate(
         self,
         *,
@@ -209,9 +304,12 @@ class AuthService:
         password: str,
     ) -> User | None:
         try:
-            normalized_email = self._normalize_email(
-                email
+            normalized_email = (
+                self._normalize_email(
+                    email
+                )
             )
+
         except AuthServiceError:
             self._password_service.verify_dummy(
                 password
@@ -219,8 +317,10 @@ class AuthService:
 
             return None
 
-        user = self._user_repository.get_by_email(
-            normalized_email
+        user = (
+            self._user_repository.get_by_email(
+                normalized_email
+            )
         )
 
         if user is None:
@@ -237,16 +337,30 @@ class AuthService:
 
             return None
 
-        password_is_valid = self._password_service.verify(
-            password_hash=user.password_hash,
-            password=password,
+        password_hash = str(
+            user.password_hash
+            or ""
+        )
+
+        if not password_hash:
+            self._password_service.verify_dummy(
+                password
+            )
+
+            return None
+
+        password_is_valid = (
+            self._password_service.verify(
+                password_hash=password_hash,
+                password=password,
+            )
         )
 
         if not password_is_valid:
             return None
 
         if self._password_service.needs_rehash(
-            user.password_hash
+            password_hash
         ):
             try:
                 user.password_hash = (
@@ -263,21 +377,56 @@ class AuthService:
 
         return user
 
+    # ---------------------------
+    # Email normalization
+    # ---------------------------
+
     @staticmethod
     def _normalize_email(
         email: str,
     ) -> str:
+        if not isinstance(
+            email,
+            str,
+        ):
+            raise AuthServiceError(
+                "invalid_email"
+            )
+
+        clean_email = email.strip()
+
+        if not clean_email:
+            raise AuthServiceError(
+                "invalid_email"
+            )
+
         try:
             validated_email = validate_email(
-                email.strip(),
+                clean_email,
                 check_deliverability=False,
             )
+
         except EmailNotValidError as exc:
             raise AuthServiceError(
                 "invalid_email"
             ) from exc
 
-        return validated_email.normalized.lower()
+        normalized_email = (
+            validated_email.normalized
+            .strip()
+            .lower()
+        )
+
+        if len(normalized_email) > 320:
+            raise AuthServiceError(
+                "invalid_email"
+            )
+
+        return normalized_email
+
+    # ---------------------------
+    # Name normalization
+    # ---------------------------
 
     @staticmethod
     def _normalize_name(
@@ -285,6 +434,14 @@ class AuthService:
         *,
         maximum_length: int,
     ) -> str:
+        if not isinstance(
+            value,
+            str,
+        ):
+            raise AuthServiceError(
+                "invalid_name"
+            )
+
         normalized_value = " ".join(
             value.strip().split()
         )
@@ -301,18 +458,59 @@ class AuthService:
 
         return normalized_value
 
+    # ---------------------------
+    # Locale normalization
+    # ---------------------------
+
+    @staticmethod
+    def _normalize_locale(
+        locale: str,
+    ) -> str:
+        normalized_locale = str(
+            locale
+            or ""
+        ).strip().lower()
+
+        normalized_locale = (
+            normalized_locale
+            .replace("_", "-")
+            .split(
+                "-",
+                maxsplit=1,
+            )[0]
+        )
+
+        if (
+            normalized_locale
+            not in SUPPORTED_LOCALES
+        ):
+            return DEFAULT_LOCALE
+
+        return normalized_locale
+
+    # ---------------------------
+    # Slug generation
+    # ---------------------------
+
     @staticmethod
     def _create_unique_slug(
         value: str,
+        *,
+        maximum_length: int = 160,
+        fallback: str = "organisation",
     ) -> str:
-        ascii_value = unicodedata.normalize(
-            "NFKD",
-            value,
-        ).encode(
-            "ascii",
-            "ignore",
-        ).decode(
-            "ascii"
+        ascii_value = (
+            unicodedata.normalize(
+                "NFKD",
+                value,
+            )
+            .encode(
+                "ascii",
+                "ignore",
+            )
+            .decode(
+                "ascii"
+            )
         )
 
         base_slug = re.sub(
@@ -322,10 +520,30 @@ class AuthService:
         ).strip("-")
 
         if not base_slug:
-            base_slug = "organisation"
+            base_slug = fallback
 
         suffix = secrets.token_hex(4)
 
+        available_base_length = max(
+            1,
+            maximum_length
+            - len(suffix)
+            - 1,
+        )
+
+        shortened_base_slug = (
+            base_slug[
+                :available_base_length
+            ].rstrip("-")
+        )
+
+        if not shortened_base_slug:
+            shortened_base_slug = (
+                fallback[
+                    :available_base_length
+                ]
+            )
+
         return (
-            f"{base_slug[:160]}-{suffix}"
+            f"{shortened_base_slug}-{suffix}"
         )
